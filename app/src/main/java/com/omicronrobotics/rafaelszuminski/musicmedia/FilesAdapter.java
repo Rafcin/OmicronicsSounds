@@ -18,12 +18,12 @@ import java.util.ArrayList;
 public class FilesAdapter extends BaseAdapter {
 
     ArrayList<File> files; //Array
-    Context ctxt;
+    Context adapContext;
     LayoutInflater layoutInflater;
 
     public FilesAdapter(ArrayList<File> arr, Context c){
         files = arr;
-        ctxt =c;
+        adapContext = c;
         layoutInflater = (LayoutInflater)c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
@@ -69,8 +69,8 @@ public class FilesAdapter extends BaseAdapter {
         TextView viewFile = null;
         viewFile = (TextView) layoutInflater.inflate(R.layout.layoutview ,null);
         viewFile.setText(files.get(i).getName());
-        viewFile.setTextColor(Color.WHITE);
-        viewFile.setHeight(230);
+        viewFile.setTextColor(Color.rgb(46,68,159));
+        viewFile.setHeight(220);
 
         return viewFile;
 

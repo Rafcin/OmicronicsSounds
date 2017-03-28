@@ -11,9 +11,9 @@
         android:layout_height="59dp"
         android:background="@android:drawable/ic_menu_save"
         android:textAppearance="@style/TextAppearance.AppCompat"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="28dp" />
+        android:layout_marginEnd="19dp"
+        android:layout_above="@+id/listviewsd"
+        android:layout_alignParentEnd="true" />
 
 
     <ListView
@@ -23,7 +23,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/toolbar2"
-        android:background="@android:color/darker_gray" />
+        android:background="@color/NewColor" />
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar2"
@@ -31,7 +31,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:background="@android:color/background_dark"
+        android:background="@color/colorPrimary"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme" />
 

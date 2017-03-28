@@ -48,7 +48,7 @@ public class FileActivity extends AppCompatActivity {
     // Include the custom made adapter.
     FilesAdapter adapter;
     ListView lv;
-    ArrayList<File> fileArray;
+    ArrayList<File> mFileArray;
     String currentPath;
     String previousPath;
 
@@ -57,11 +57,15 @@ public class FileActivity extends AppCompatActivity {
 
     Button mMusicSave;
 
-    MyMediaScannerConnectionClient mMediaScanner;
+
 
     wseemann.media.jplaylistparser.parser.m3u.M3UPlaylistParser mM3Parser;
 
     String m3uFileName;
+
+    String playlist = "";
+
+
 
 
     ArrayDeque<String> fileHistory;
@@ -90,7 +94,7 @@ public class FileActivity extends AppCompatActivity {
 
         m3uFileName = new String();
 
-        mediastoreTest();
+        //mediastoreTest();
 
 
 
@@ -105,22 +109,22 @@ public class FileActivity extends AppCompatActivity {
 
 
 
-        fileArray = getFiles(Environment.getExternalStorageDirectory().getPath());
+        mFileArray = getFiles(Environment.getExternalStorageDirectory().getPath());
         Log.d(TAG, "currentPath" + currentPath);
 
-        adapter = new FilesAdapter(fileArray, this);
+        adapter = new FilesAdapter(mFileArray, this);
         lv = (ListView) findViewById(R.id.listviewsd);
         //Add as HOME so no error due to Null
         fileHistory.add("/storage/emulated/0/");
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if (fileArray.get(i).isDirectory()) {
-                    String filePath = fileArray.get(i).getAbsolutePath();
+                if (mFileArray.get(i).isDirectory()) {
+                    String filePath = mFileArray.get(i).getAbsolutePath();
                     Log.d(TAG, "" + filePath);
                     fileHistory.add(filePath);
-                    fileArray = getFiles(filePath);
-                    adapter.setFileData(fileArray);
+                    mFileArray = getFiles(filePath);
+                    adapter.setFileData(mFileArray);
                     Log.d(TAG, "Current Path" + currentPath);
                     Log.d(TAG, "Previous Path" + previousPath);
                 }
@@ -193,9 +197,9 @@ public class FileActivity extends AppCompatActivity {
         Log.d(TAG, "Going to " + goingTo);
 
         if (fileHistory != null) {
-            fileArray = getFiles(goingTo);
+            mFileArray = getFiles(goingTo);
         }
-        adapter.setFileData(fileArray);
+        adapter.setFileData(mFileArray);
 
 
     }
@@ -234,8 +238,8 @@ public class FileActivity extends AppCompatActivity {
         alertDia.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                savePlaylist("/storage/emulated/0/Music/", inputText.getText().toString() + ".m3u");
                 m3uFileName = inputText.getText().toString();
+                loadPlaylist("/storage/emulated/0/Music/", inputText.getText().toString() + ".m3u");
             }
         });
         AlertDialog alertDialogAll = alertDia.create();
@@ -245,15 +249,59 @@ public class FileActivity extends AppCompatActivity {
 
 
 
-    public void savePlaylist(String fLoc, String fileName) {
+    public void loadPlaylist(String fLoc, String fileName) {
         Log.d(TAG, "ItemsInAdapt " + adapter.getFileData().size());
-        String playlist = "";
+
+
+        ContentResolver cR = this.getContentResolver();
+        Uri music = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+        List<Integer> listOfMusicIds = new ArrayList<>();
+
+
+        // Loop through files of current dir.
+        for(File f : mFileArray){
+            //Get Abs path of file. Then query content provider to check if file is in mediastore.
+            int mediaId = 1;
+
+            Cursor cursor = cR.query(music, new String[]{"*"},"_data=?",new String[]{f.getAbsolutePath()},null);
+            cursor.moveToFirst();
+            if(!cursor.isAfterLast()){
+                listOfMusicIds.add(Integer.valueOf(cursor.getString(0)));
+                Log.d("CursorInfo",": "+cursor.getString(0));
+
+            } else {
+                //AddFileToMediaStoreHere
+
+                //Get ID of added file.
+            }
+
+        }
+        SavePlaylist(this,listOfMusicIds,m3uFileName);
+
+        //
+
+        // get all music files in media store.
+
+
+
+
+        String simpleCheckName = "";
+
+
+
         for (File file : adapter.getFileData()) {
             if (file.isFile()) {
-                playlist += "\"" + file.getName() + "\"" + "\n";
+                //playlist += "\"" + file.getName() + "\"" + "\n";
+                playlist = file.getName();
                 Log.d("Music File", ": " + file.getName());
+                //Log.d("CursorName",": "+compareMusicName);
+                String playlistNameAndLoc = fLoc+playlist;
+
             }
+
         }
+
+
 
         // "/storage/emulated/0/Music/"
 
@@ -262,53 +310,58 @@ public class FileActivity extends AppCompatActivity {
         File m3uFile = new File(fileLoc, fileName);
         Log.d("FileType",": "+m3uFile);
 
-        List<Integer> listOfMusicIds = new ArrayList<>();
+
+        //TestMusicData
+        /*
         listOfMusicIds.add(25743);
         listOfMusicIds.add(25719);
         listOfMusicIds.add(14385);
+        */
+
 
         //Adds the music/makes the playlist
-        SavePlaylist(this,listOfMusicIds,m3uFileName);
+
         //M3U filename is the promt text you write/input. Name of playlist saved.
 
 
         Log.d("IntentLog","Intent Sent");
     }
 
-    public void mediastoreTest(){
-
-        ContentResolver cR = this.getContentResolver();
-
-        Uri music = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-
-        String[] fileData = { MediaStore.Audio.Media.DATA };
 
 
-        Cursor cursor = cR.query(music, new String[]{"*"},null,null,null);
 
-        cursor.moveToFirst();
-
-        Log.d("MediaStoreTest",": "+cursor.getColumnNames());
-
-        int i = 0;
-
-        //String[] columnFilePath = {MediaStore.Audio.Media.DATA};
-        //int columnIndex = cursor.getColumnIndexOrThrow(String.valueOf(columnFilePath));
-
-        for(String columnName : cursor.getColumnNames()){
-            Log.d("MediaStoreTest",": "+columnName);
-            Log.d("MediaStoreFilePath",": "+fileData);
-        }
-
-        do{
-            Log.d("MediaStoreTest",": " + cursor.getString(cursor.getColumnIndex("_id"))
-                + " - " + cursor.getString(cursor.getColumnIndex("_display_name"))
-                    + " - " + cursor.getString(cursor.getColumnIndex("_data"))
-
-            );
-
-        }while (cursor.moveToNext());
-    }
+//    public void mediastoreTest(){
+//
+//        ContentResolver cR = this.getContentResolver();
+//
+//        Uri music = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+//
+//        String[] fileData = { MediaStore.Audio.Media.DATA };
+//
+//        Cursor cursor = cR.query(music, new String[]{"*"},null,null,null);
+//
+//        cursor.moveToFirst();
+//
+//        Log.d("MediaStoreTest",": "+cursor.getColumnNames());
+//
+//        int i = 0;
+//
+//        //String[] columnFilePath = {MediaStore.Audio.Media.DATA};
+//        //int columnIndex = cursor.getColumnIndexOrThrow(String.valueOf(columnFilePath));
+//
+//        for(String columnName : cursor.getColumnNames()){
+//            Log.d("MediaStoreTest",": "+columnName);
+//            Log.d("MediaStoreFilePath",": "+fileData);
+//        }
+//
+//        do{
+//            Log.d("MediaStoreTest",": " + cursor.getString(cursor.getColumnIndex("_id"))
+//                + " - " + cursor.getString(cursor.getColumnIndex("_display_name"))
+//                    + " - " + cursor.getString(cursor.getColumnIndex("_data")));
+//
+//
+//        }while (cursor.moveToNext());
+//    }
 
 
     //Check File Path, used when Debuging, not worth having in code but good to use to test file paths.
