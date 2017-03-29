@@ -36,8 +36,6 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 
-import wseemann.media.jplaylistparser.parser.m3u.M3UPlaylistParser;
-
 /**
  * Created by rafaelszuminski on 2/2/17.
  */
@@ -59,7 +57,6 @@ public class FileActivity extends AppCompatActivity {
 
 
 
-    wseemann.media.jplaylistparser.parser.m3u.M3UPlaylistParser mM3Parser;
 
     String m3uFileName;
 
@@ -90,11 +87,7 @@ public class FileActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
         }
 
-        mM3Parser = new M3UPlaylistParser();
-
         m3uFileName = new String();
-
-        //mediastoreTest();
 
 
 
@@ -224,6 +217,7 @@ public class FileActivity extends AppCompatActivity {
     }
 
 
+    //Function called for onclick to make it easier. Becuase its easier when you make it a function.
     public void inputText() {
         AlertDialog.Builder alertDia = new AlertDialog.Builder(c);
         LayoutInflater layoutInf = LayoutInflater.from(c);
@@ -252,7 +246,7 @@ public class FileActivity extends AppCompatActivity {
     public void loadPlaylist(String fLoc, String fileName) {
         Log.d(TAG, "ItemsInAdapt " + adapter.getFileData().size());
 
-
+        //Init Content Res, Music Uri and List that adds ids to playlist.
         ContentResolver cR = this.getContentResolver();
         Uri music = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         List<Integer> listOfMusicIds = new ArrayList<>();
@@ -271,24 +265,19 @@ public class FileActivity extends AppCompatActivity {
 
             } else {
                 //AddFileToMediaStoreHere
-
                 //Get ID of added file.
             }
 
         }
+        //Saves the playlist.
         SavePlaylist(this,listOfMusicIds,m3uFileName);
 
-        //
-
-        // get all music files in media store.
 
 
 
 
-        String simpleCheckName = "";
 
-
-
+       //Gets File MP3 Name.
         for (File file : adapter.getFileData()) {
             if (file.isFile()) {
                 //playlist += "\"" + file.getName() + "\"" + "\n";
@@ -309,59 +298,10 @@ public class FileActivity extends AppCompatActivity {
         String fileLoc = fLoc;
         File m3uFile = new File(fileLoc, fileName);
         Log.d("FileType",": "+m3uFile);
-
-
-        //TestMusicData
-        /*
-        listOfMusicIds.add(25743);
-        listOfMusicIds.add(25719);
-        listOfMusicIds.add(14385);
-        */
-
-
-        //Adds the music/makes the playlist
-
-        //M3U filename is the promt text you write/input. Name of playlist saved.
-
-
         Log.d("IntentLog","Intent Sent");
     }
 
 
-
-
-//    public void mediastoreTest(){
-//
-//        ContentResolver cR = this.getContentResolver();
-//
-//        Uri music = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-//
-//        String[] fileData = { MediaStore.Audio.Media.DATA };
-//
-//        Cursor cursor = cR.query(music, new String[]{"*"},null,null,null);
-//
-//        cursor.moveToFirst();
-//
-//        Log.d("MediaStoreTest",": "+cursor.getColumnNames());
-//
-//        int i = 0;
-//
-//        //String[] columnFilePath = {MediaStore.Audio.Media.DATA};
-//        //int columnIndex = cursor.getColumnIndexOrThrow(String.valueOf(columnFilePath));
-//
-//        for(String columnName : cursor.getColumnNames()){
-//            Log.d("MediaStoreTest",": "+columnName);
-//            Log.d("MediaStoreFilePath",": "+fileData);
-//        }
-//
-//        do{
-//            Log.d("MediaStoreTest",": " + cursor.getString(cursor.getColumnIndex("_id"))
-//                + " - " + cursor.getString(cursor.getColumnIndex("_display_name"))
-//                    + " - " + cursor.getString(cursor.getColumnIndex("_data")));
-//
-//
-//        }while (cursor.moveToNext());
-//    }
 
 
     //Check File Path, used when Debuging, not worth having in code but good to use to test file paths.
@@ -377,6 +317,9 @@ public class FileActivity extends AppCompatActivity {
     }
 
     //Save Playlist
+
+    //Credits to Songdro and edited by me.
+    //Adds to playlist
     public static void SavePlaylist(Context context, List<Integer> playList, String newPlaylistName) {
 
         // Gets the content resolver

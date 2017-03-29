@@ -17,6 +17,8 @@ import java.util.ArrayList;
 
 public class FilesAdapter extends BaseAdapter {
 
+
+
     ArrayList<File> files; //Array
     Context adapContext;
     LayoutInflater layoutInflater;
