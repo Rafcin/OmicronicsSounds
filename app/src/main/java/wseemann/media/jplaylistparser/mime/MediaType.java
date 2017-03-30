@@ -151,7 +151,7 @@ public final class MediaType implements Comparable<MediaType> {
 
     private static Map<String, String> parseParameters(String string) {
         if (string.length() == 0) {
-            return Collections.<String, String>emptyMap();
+            return Collections.emptyMap();
         }
 
         // Extracts k1=v1, k2=v2 from mime/type; k1=v1; k2=v2

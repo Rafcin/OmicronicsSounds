@@ -7,10 +7,10 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.ContentObserver;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -55,15 +55,9 @@ public class FileActivity extends AppCompatActivity {
 
     Button mMusicSave;
 
-
-
-
     String m3uFileName;
 
     String playlist = "";
-
-
-
 
     ArrayDeque<String> fileHistory;
 
@@ -75,27 +69,26 @@ public class FileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_files);
-        final Intent int1 = getIntent();
         //File History to store.
         fileHistory = new ArrayDeque<String>();
         //Init saveButton
         mMusicSave = (Button) findViewById(R.id.saveMusicBtn);
-
+        mMusicSave.setBackgroundResource(R.drawable.ic_savewrite2);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
                 && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
                 || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
         }
 
+        //MAKE STRING
         m3uFileName = new String();
-
-
-
 
         //Sets Toolbar/removes Toolbar title.
         Toolbar mToolBar = (Toolbar)findViewById(R.id.toolbar2);
         setSupportActionBar(mToolBar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
+        mToolBar.setTitleTextColor(Color.WHITE);
+        mToolBar.setTitle("Playlist Creator");
 
         //Sets fullscreen so cant see InfoBar
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -109,6 +102,9 @@ public class FileActivity extends AppCompatActivity {
         lv = (ListView) findViewById(R.id.listviewsd);
         //Add as HOME so no error due to Null
         fileHistory.add("/storage/emulated/0/");
+        //lv.setDivider(new ColorDrawable(Color.rgb(46,68,159)));  //hide the divider
+        //lv .setClipToPadding(false);   // list items won't clip, so padding stays
+        //lv.setDividerHeight(3);
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -152,11 +148,7 @@ public class FileActivity extends AppCompatActivity {
         mMusicSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 inputText();
-
-
-
             }
         });
 
@@ -219,6 +211,7 @@ public class FileActivity extends AppCompatActivity {
 
     //Function called for onclick to make it easier. Becuase its easier when you make it a function.
     public void inputText() {
+
         AlertDialog.Builder alertDia = new AlertDialog.Builder(c);
         LayoutInflater layoutInf = LayoutInflater.from(c);
         View mView = layoutInf.inflate(R.layout.input_info, null);
@@ -365,6 +358,8 @@ public class FileActivity extends AppCompatActivity {
             contentResolver.insert(insertUri, contentValues);
         }
     }
+
+
 
 
 }

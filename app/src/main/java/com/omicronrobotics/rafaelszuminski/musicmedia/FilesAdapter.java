@@ -2,10 +2,12 @@ package com.omicronrobotics.rafaelszuminski.musicmedia;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.File;
@@ -67,14 +69,24 @@ public class FilesAdapter extends BaseAdapter {
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
+        View layout = layoutInflater.inflate(R.layout.layoutview ,null);
 
-        TextView viewFile = null;
-        viewFile = (TextView) layoutInflater.inflate(R.layout.layoutview ,null);
+        TextView viewFile = (TextView) layout.findViewById(R.id.fileItem);
+        ImageView imageFile = (ImageView)layout.findViewById(R.id.listImage);
+        imageFile.setImageResource(R.drawable.ic_action_name);
         viewFile.setText(files.get(i).getName());
         viewFile.setTextColor(Color.rgb(46,68,159));
+        if(files.get(i).getAbsolutePath().endsWith(".mp3")){
+            viewFile.setTextColor(Color.rgb(0,150,136));
+            viewFile.setTypeface(null, Typeface.BOLD);
+            imageFile.setImageResource(R.drawable.ic_music);
+        }
         viewFile.setHeight(220);
 
-        return viewFile;
+
+        return layout;
+
+
 
     }
 }
