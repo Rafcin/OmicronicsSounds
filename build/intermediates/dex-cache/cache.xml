@@ -7,17 +7,8 @@
         jumboMode="true"
         optimize="true"
         revision="25.0.1"
-        sha1="6f25ef821c0d502f0f28c3940f5c565667a650c8">
+        sha1="ab72c2935dfd62baa3dec18b64d62d1ddf9616d0">
         <dex dex="/Users/rafaelszuminski/tango-examples-c-master/MusicMedia/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run-bootstrap_d474b7693f6a030c8ffc16580f39ce042dffdf2a/classes.dex" />
-    </item>
-    <item
-        is-multidex="false"
-        jar="/Users/rafaelszuminski/.android/build-cache/dd3e1f23132b978c09e37b97ceed65f4f9b77c40/output/jars/classes.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="25.0.1"
-        sha1="e704e00a5ae9f63cc77a5c13322a8d1b5f5fcf09">
-        <dex dex="/Users/rafaelszuminski/tango-examples-c-master/MusicMedia/app/build/intermediates/pre-dexed/debug/classes_100d595bca8f30a5f08fbc3007ac11138be065ce.jar" />
     </item>
     <item
         is-multidex="true"
@@ -27,15 +18,6 @@
         revision="25.0.1"
         sha1="c323c36ecc68965c4cfb460f7721113d2b61ed03">
         <dex dex="/Users/rafaelszuminski/tango-examples-c-master/MusicMedia/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run_f281f1b0d0ad29a97ba54d46d0e93fbfac84bd9f/classes.dex" />
-    </item>
-    <item
-        is-multidex="false"
-        jar="/Users/rafaelszuminski/tango-examples-c-master/MusicMedia/jdom-2.0.5/jdom-2.0.5.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="25.0.1"
-        sha1="2001db51c131e555bafdb77fc52af6a9408c505e">
-        <dex dex="/Users/rafaelszuminski/tango-examples-c-master/MusicMedia/app/build/intermediates/pre-dexed/debug/jdom-2.0.5_f157a519eeecbce347c439a920d54e8e3ccfe281.jar" />
     </item>
 
 </items>

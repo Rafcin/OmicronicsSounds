@@ -149,6 +149,9 @@ public class FileActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 inputText();
+                //Testing Recurisve GetFile.
+                //getFilesForMusicFolders(Environment.getExternalStorageDirectory().getPath());
+                Log.d("getMusicDirs",": "+getFilesForMusicFolders(Environment.getExternalStorageDirectory().getPath()));
             }
         });
 
@@ -189,22 +192,51 @@ public class FileActivity extends AppCompatActivity {
 
     }
 
+    //Gets the files from the SDCARD. Used to display paths etc.
     private ArrayList<File> getFiles(String path) {
         ArrayList<File> directoriesArray = new ArrayList<File>();
         previousPath = currentPath;
         currentPath = path;
         File file = new File(path);
         File[] allfiles = file.listFiles();
+        //loops for the ammount of the files.
         for (int i = 0; i < allfiles.length; i++) {
             File fileItem = allfiles[i];
             if (fileItem.isDirectory()) {
+                //if its a Dir then add as dir.
                 directoriesArray.add(fileItem);
             } else if (fileItem.isFile() && fileItem.getAbsolutePath().endsWith(".mp3")) {
+                // if its a file and contains the ending format .mp3 then it is a mp3.
                 directoriesArray.add(fileItem);
             }
 
 
         }
+        //return it.
+        return directoriesArray;
+    }
+
+    private ArrayList<File> getFilesForMusicFolders(String path) {
+        ArrayList<File> directoriesArray = new ArrayList<File>();
+        previousPath = currentPath;
+        currentPath = path;
+        File file = new File(path);
+        File[] allfiles = file.listFiles();
+        //loops for the ammount of the files.
+        for (int i = 0; i < allfiles.length; i++) {
+            File fileItem = allfiles[i];
+            if (fileItem.isDirectory()) {
+                //if its a Dir then add as dir.
+                directoriesArray.add(fileItem);
+            } else if (fileItem.isFile() && fileItem.getAbsolutePath().endsWith(".mp3")) {
+                // if its a file and contains the ending format .mp3 then it is a mp3.
+                getFiles(path);
+                directoriesArray.add(fileItem);
+            }
+
+
+        }
+        //return it.
         return directoriesArray;
     }
 
@@ -326,14 +358,17 @@ public class FileActivity extends AppCompatActivity {
 
         cursor.moveToFirst();
         do {
+            //Gets Name
             String playlistName = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Playlists.NAME));
             if (playlistName.equalsIgnoreCase(newPlaylistName)) {
                 playlistId = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Playlists._ID));
                 break;
             }
         } while (cursor.moveToNext());
+        // Do this while cursor moves to next item in the Database.
 
         cursor.close();
+        // end-it curosr
 
         if (playlistId != 0) {
             Uri deleteUri = ContentUris.withAppendedId(playlistsUri, playlistId);
@@ -347,17 +382,23 @@ public class FileActivity extends AppCompatActivity {
 
         Uri newPlaylistUri = contentResolver.insert(playlistsUri, values);
 
+        //Insert with the dir of the mp3
         Uri insertUri = Uri.withAppendedPath(newPlaylistUri, MediaStore.Audio.Playlists.Members.CONTENT_DIRECTORY);
 
         int order = 1;
 
         for (int id : playList) {
+            //Set Order,AudioID and insert the mp3.
             ContentValues contentValues = new ContentValues();
             contentValues.put(MediaStore.Audio.Playlists.Members.PLAY_ORDER, order++);
             contentValues.put(MediaStore.Audio.Playlists.Members.AUDIO_ID, id);
             contentResolver.insert(insertUri, contentValues);
         }
     }
+
+
+
+
 
 
 

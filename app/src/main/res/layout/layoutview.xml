@@ -27,10 +27,21 @@
 
     <TextView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/fileItem"
-        android:layout_width="match_parent"
+        android:layout_width="180dp"
         android:layout_height="?android:attr/listPreferredItemHeight"
         android:gravity="center_vertical"
         android:paddingStart="?android:attr/expandableListPreferredItemPaddingLeft"
         android:text="FileNames"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+    <TextView
+        android:id="@+id/filePath"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="0.69"
+        android:gravity="center_vertical"
+        android:text="FilePath"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        android:textSize="12sp" />
+
 </LinearLayout>

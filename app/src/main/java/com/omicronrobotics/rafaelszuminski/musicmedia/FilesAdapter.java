@@ -73,13 +73,20 @@ public class FilesAdapter extends BaseAdapter {
 
         TextView viewFile = (TextView) layout.findViewById(R.id.fileItem);
         ImageView imageFile = (ImageView)layout.findViewById(R.id.listImage);
+        TextView subFilePath = (TextView)layout.findViewById(R.id.filePath);
         imageFile.setImageResource(R.drawable.ic_action_name);
         viewFile.setText(files.get(i).getName());
         viewFile.setTextColor(Color.rgb(46,68,159));
+        subFilePath.setText("");
+        //Set Text 0
         if(files.get(i).getAbsolutePath().endsWith(".mp3")){
             viewFile.setTextColor(Color.rgb(0,150,136));
             viewFile.setTypeface(null, Typeface.BOLD);
             imageFile.setImageResource(R.drawable.ic_music);
+            subFilePath.setText(files.get(i).getAbsolutePath().trim());
+        }
+        if(files.get(i).getAbsolutePath().contains("Music") || files.get(i).getAbsolutePath().contains("music")){
+            //viewFile.setTextColor(Color.rgb(30,150,136));
         }
         viewFile.setHeight(220);
 
