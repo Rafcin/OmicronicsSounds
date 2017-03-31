@@ -31,6 +31,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.Theme;
+
 import java.io.File;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -151,9 +154,13 @@ public class FileActivity extends AppCompatActivity {
                 inputText();
                 //Testing Recurisve GetFile.
                 //getFilesForMusicFolders(Environment.getExternalStorageDirectory().getPath());
+
                 Log.d("getMusicDirs",": "+getFilesForMusicFolders(Environment.getExternalStorageDirectory().getPath()));
             }
         });
+
+
+        customDialog();
 
 
 
@@ -243,6 +250,8 @@ public class FileActivity extends AppCompatActivity {
 
     //Function called for onclick to make it easier. Becuase its easier when you make it a function.
     public void inputText() {
+
+
 
         AlertDialog.Builder alertDia = new AlertDialog.Builder(c);
         LayoutInflater layoutInf = LayoutInflater.from(c);
@@ -394,9 +403,20 @@ public class FileActivity extends AppCompatActivity {
             contentValues.put(MediaStore.Audio.Playlists.Members.AUDIO_ID, id);
             contentResolver.insert(insertUri, contentValues);
         }
+
+
     }
 
-
+    public void customDialog(){
+        new MaterialDialog.Builder(this)
+                .theme(Theme.LIGHT)
+                .iconRes(R.mipmap.ic_launcher)
+                .positiveColor(Color.rgb(0,150,136))
+                .title(R.string.app_name)
+                .content("TEXT")
+                .positiveText("Continue")
+                .show();
+    }
 
 
 
