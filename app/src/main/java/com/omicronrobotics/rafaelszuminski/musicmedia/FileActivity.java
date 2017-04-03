@@ -31,6 +31,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
 
@@ -91,6 +93,7 @@ public class FileActivity extends AppCompatActivity {
         setSupportActionBar(mToolBar);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
         mToolBar.setTitleTextColor(Color.WHITE);
+        mToolBar.setBackgroundColor(Color.rgb(33,33,33));
         mToolBar.setTitle("Playlist Creator");
 
         //Sets fullscreen so cant see InfoBar
@@ -108,6 +111,13 @@ public class FileActivity extends AppCompatActivity {
         //lv.setDivider(new ColorDrawable(Color.rgb(46,68,159)));  //hide the divider
         //lv .setClipToPadding(false);   // list items won't clip, so padding stays
         //lv.setDividerHeight(3);
+        lv.setBackgroundColor(Color.rgb(224,224,224));
+        lv.setDividerHeight(0);
+
+
+
+
+
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -409,12 +419,17 @@ public class FileActivity extends AppCompatActivity {
 
     public void customDialog(){
         new MaterialDialog.Builder(this)
-                .theme(Theme.LIGHT)
-                .iconRes(R.mipmap.ic_launcher)
-                .positiveColor(Color.rgb(0,150,136))
+                .theme(Theme.DARK)
+                //.iconRes(R.mipmap.ic_launcher)
+                .positiveColor(Color.WHITE)
                 .title(R.string.app_name)
-                .content("TEXT")
+                .titleGravity(GravityEnum.CENTER)
+                .titleColor(Color.WHITE)
+                .content("")
                 .positiveText("Continue")
+                .backgroundColor(Color.rgb(48,48,48))
+                .btnSelector(R.drawable.md_btn_selector_custom, DialogAction.POSITIVE)
+                .contentColor(Color.WHITE)
                 .show();
     }
 

@@ -32,7 +32,8 @@
         android:gravity="center_vertical"
         android:paddingStart="?android:attr/expandableListPreferredItemPaddingLeft"
         android:text="FileNames"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textSize="18sp" />
 
     <TextView
         android:id="@+id/filePath"
