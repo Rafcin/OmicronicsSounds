@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -69,6 +70,7 @@ public class FileActivity extends AppCompatActivity {
     private static final String TAG = "MusicTool";
 
     //Setup location to access.
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @SuppressLint("sdcard/")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,7 +95,7 @@ public class FileActivity extends AppCompatActivity {
         setSupportActionBar(mToolBar);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
         mToolBar.setTitleTextColor(Color.WHITE);
-        mToolBar.setBackgroundColor(Color.rgb(33,33,33));
+        mToolBar.setBackgroundColor(Color.rgb(255,87,34));
         mToolBar.setTitle("Playlist Creator");
 
         //Sets fullscreen so cant see InfoBar
@@ -111,7 +113,7 @@ public class FileActivity extends AppCompatActivity {
         //lv.setDivider(new ColorDrawable(Color.rgb(46,68,159)));  //hide the divider
         //lv .setClipToPadding(false);   // list items won't clip, so padding stays
         //lv.setDividerHeight(3);
-        lv.setBackgroundColor(Color.rgb(224,224,224));
+        lv.setBackgroundColor(Color.WHITE);
         lv.setDividerHeight(0);
 
 
@@ -184,13 +186,9 @@ public class FileActivity extends AppCompatActivity {
 
         //Navigation Back//
         /*
-
         Add to Queue
         Once back is pressed update view list in Adapter
         Pop file history/remove (same thing)
-
-
-
 
          */
 
@@ -210,6 +208,7 @@ public class FileActivity extends AppCompatActivity {
     }
 
     //Gets the files from the SDCARD. Used to display paths etc.
+
     private ArrayList<File> getFiles(String path) {
         ArrayList<File> directoriesArray = new ArrayList<File>();
         previousPath = currentPath;
@@ -233,6 +232,8 @@ public class FileActivity extends AppCompatActivity {
         return directoriesArray;
     }
 
+
+//Temp
     private ArrayList<File> getFilesForMusicFolders(String path) {
         ArrayList<File> directoriesArray = new ArrayList<File>();
         previousPath = currentPath;
@@ -261,8 +262,6 @@ public class FileActivity extends AppCompatActivity {
     //Function called for onclick to make it easier. Becuase its easier when you make it a function.
     public void inputText() {
 
-
-
         AlertDialog.Builder alertDia = new AlertDialog.Builder(c);
         LayoutInflater layoutInf = LayoutInflater.from(c);
         View mView = layoutInf.inflate(R.layout.input_info, null);
@@ -280,6 +279,7 @@ public class FileActivity extends AppCompatActivity {
                 loadPlaylist("/storage/emulated/0/Music/", inputText.getText().toString() + ".m3u");
             }
         });
+        //Create the Dialog
         AlertDialog alertDialogAll = alertDia.create();
         alertDialogAll.show();
 
@@ -316,11 +316,6 @@ public class FileActivity extends AppCompatActivity {
         //Saves the playlist.
         SavePlaylist(this,listOfMusicIds,m3uFileName);
 
-
-
-
-
-
        //Gets File MP3 Name.
         for (File file : adapter.getFileData()) {
             if (file.isFile()) {
@@ -333,8 +328,6 @@ public class FileActivity extends AppCompatActivity {
             }
 
         }
-
-
 
         // "/storage/emulated/0/Music/"
 
