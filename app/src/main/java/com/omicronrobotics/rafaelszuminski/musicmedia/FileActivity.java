@@ -6,7 +6,6 @@ import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.database.ContentObserver;
 import android.database.Cursor;
@@ -17,19 +16,17 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -44,6 +41,13 @@ import java.util.List;
 
 /**
  * Created by rafaelszuminski on 2/2/17.
+ *
+ *
+ * @TODO Fix Index 0 Error on Samsung
+ * @TODO Create All rescan mediaserver
+ * @TODO Redesign UI Later, make a bit more like Playmuisc?
+ *
+ *
  */
 
 public class FileActivity extends AppCompatActivity {
@@ -67,7 +71,11 @@ public class FileActivity extends AppCompatActivity {
 
     ArrayDeque<String> fileHistory;
 
+    public List<String> playlistNames = new ArrayList<>();
+
     private static final String TAG = "MusicTool";
+
+    Boolean doSave = false;
 
     //Setup location to access.
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -163,19 +171,14 @@ public class FileActivity extends AppCompatActivity {
         mMusicSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                inputText();
-                //Testing Recurisve GetFile.
-                //getFilesForMusicFolders(Environment.getExternalStorageDirectory().getPath());
+                //Recurisive Playlist Maker
+                listFinish();
 
-                Log.d("getMusicDirs",": "+getFilesForMusicFolders(Environment.getExternalStorageDirectory().getPath()));
             }
         });
 
-
-        customDialog();
-
-
-
+        //Displays Custom Dialog box on start.
+        introDialog();
 
     }
 
@@ -205,6 +208,7 @@ public class FileActivity extends AppCompatActivity {
         adapter.setFileData(mFileArray);
 
 
+
     }
 
     //Gets the files from the SDCARD. Used to display paths etc.
@@ -232,132 +236,10 @@ public class FileActivity extends AppCompatActivity {
         return directoriesArray;
     }
 
-
-//Temp
-    private ArrayList<File> getFilesForMusicFolders(String path) {
-        ArrayList<File> directoriesArray = new ArrayList<File>();
-        previousPath = currentPath;
-        currentPath = path;
-        File file = new File(path);
-        File[] allfiles = file.listFiles();
-        //loops for the ammount of the files.
-        for (int i = 0; i < allfiles.length; i++) {
-            File fileItem = allfiles[i];
-            if (fileItem.isDirectory()) {
-                //if its a Dir then add as dir.
-                directoriesArray.add(fileItem);
-            } else if (fileItem.isFile() && fileItem.getAbsolutePath().endsWith(".mp3")) {
-                // if its a file and contains the ending format .mp3 then it is a mp3.
-                getFiles(path);
-                directoriesArray.add(fileItem);
-            }
-
-
-        }
-        //return it.
-        return directoriesArray;
-    }
-
-
-    //Function called for onclick to make it easier. Becuase its easier when you make it a function.
-    public void inputText() {
-
-        AlertDialog.Builder alertDia = new AlertDialog.Builder(c);
-        LayoutInflater layoutInf = LayoutInflater.from(c);
-        View mView = layoutInf.inflate(R.layout.input_info, null);
-        final EditText inputText = (EditText) mView.findViewById(R.id.edittext);
-        alertDia.setView(mView);
-        alertDia.setTitle("Playlist Name");
-
-
-        //Make Sure Usr SEES THIS!
-        alertDia.setCancelable(false);
-        alertDia.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                m3uFileName = inputText.getText().toString();
-                loadPlaylist("/storage/emulated/0/Music/", inputText.getText().toString() + ".m3u");
-            }
-        });
-        //Create the Dialog
-        AlertDialog alertDialogAll = alertDia.create();
-        alertDialogAll.show();
-
-    }
-
-
-
-    public void loadPlaylist(String fLoc, String fileName) {
-        Log.d(TAG, "ItemsInAdapt " + adapter.getFileData().size());
-
-        //Init Content Res, Music Uri and List that adds ids to playlist.
-        ContentResolver cR = this.getContentResolver();
-        Uri music = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-        List<Integer> listOfMusicIds = new ArrayList<>();
-
-
-        // Loop through files of current dir.
-        for(File f : mFileArray){
-            //Get Abs path of file. Then query content provider to check if file is in mediastore.
-            int mediaId = 1;
-
-            Cursor cursor = cR.query(music, new String[]{"*"},"_data=?",new String[]{f.getAbsolutePath()},null);
-            cursor.moveToFirst();
-            if(!cursor.isAfterLast()){
-                listOfMusicIds.add(Integer.valueOf(cursor.getString(0)));
-                Log.d("CursorInfo",": "+cursor.getString(0));
-
-            } else {
-                //AddFileToMediaStoreHere
-                //Get ID of added file.
-            }
-
-        }
-        //Saves the playlist.
-        SavePlaylist(this,listOfMusicIds,m3uFileName);
-
-       //Gets File MP3 Name.
-        for (File file : adapter.getFileData()) {
-            if (file.isFile()) {
-                //playlist += "\"" + file.getName() + "\"" + "\n";
-                playlist = file.getName();
-                Log.d("Music File", ": " + file.getName());
-                //Log.d("CursorName",": "+compareMusicName);
-                String playlistNameAndLoc = fLoc+playlist;
-
-            }
-
-        }
-
-        // "/storage/emulated/0/Music/"
-
-        Log.d("PlayListInfo", ": " + playlist);
-        String fileLoc = fLoc;
-        File m3uFile = new File(fileLoc, fileName);
-        Log.d("FileType",": "+m3uFile);
-        Log.d("IntentLog","Intent Sent");
-    }
-
-
-
-
-    //Check File Path, used when Debuging, not worth having in code but good to use to test file paths.
-    public String fileFilePath(Uri uri) {
-        String uriFilePath;
-        String[] fileData = { MediaStore.Images.Media.DATA };
-        Cursor cursor = this.getContentResolver().query(uri, fileData, null, null, null);
-        int column_index = cursor
-                .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-        cursor.moveToFirst();
-        return cursor.getString(column_index);
-
-    }
-
     //Save Playlist
-
     //Credits to Songdro and edited by me.
     //Adds to playlist
-    public static void SavePlaylist(Context context, List<Integer> playList, String newPlaylistName) {
+    public void SavePlaylist(Context context, List<Integer> playList, String newPlaylistName) {
 
         // Gets the content resolver
         ContentResolver contentResolver = context.getContentResolver();
@@ -405,12 +287,16 @@ public class FileActivity extends AppCompatActivity {
             contentValues.put(MediaStore.Audio.Playlists.Members.PLAY_ORDER, order++);
             contentValues.put(MediaStore.Audio.Playlists.Members.AUDIO_ID, id);
             contentResolver.insert(insertUri, contentValues);
+
         }
+
 
 
     }
 
-    public void customDialog(){
+
+    //Custom intro dialog.
+    public void introDialog(){
         new MaterialDialog.Builder(this)
                 .theme(Theme.DARK)
                 //.iconRes(R.mipmap.ic_launcher)
@@ -418,7 +304,7 @@ public class FileActivity extends AppCompatActivity {
                 .title(R.string.app_name)
                 .titleGravity(GravityEnum.CENTER)
                 .titleColor(Color.WHITE)
-                .content("")
+                .content("Created by Rafael Szuminski")
                 .positiveText("Continue")
                 .backgroundColor(Color.rgb(48,48,48))
                 .btnSelector(R.drawable.md_btn_selector_custom, DialogAction.POSITIVE)
@@ -426,9 +312,72 @@ public class FileActivity extends AppCompatActivity {
                 .show();
     }
 
+    public void listFinish(){
+        new MaterialDialog.Builder(this)
+                .theme(Theme.DARK)
+                .title("Playlists Created")
+                .titleGravity(GravityEnum.CENTER)
+                .titleColor(Color.WHITE)
+                .content("Are you sure you want to add all the playlists?")
+                .positiveText("Yes")
+                .positiveColor(Color.WHITE)
+                .negativeColor(Color.WHITE)
+                .negativeText("No")
+                .backgroundColor(Color.rgb(48,48,48))
+                .btnSelector(R.drawable.md_btn_selector_custom, DialogAction.POSITIVE)
+                .contentColor(Color.WHITE)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        createPlaylistAuto(currentPath);
+                    }
+                })
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        Log.d("DidNotSave","Playlist");
+                    }
+                })
+                .show();
+    }
 
 
+    //Creates the playlists automatically (Is a recursive func)
+    public void createPlaylistAuto(String path){
+        ContentResolver cR = this.getContentResolver();
+        Uri music = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+        //No need to have New Array list each time in the for loop.
+        List<Integer> listOfMusicIds = new ArrayList<>();
 
+        //Starting point DIR
+        File startingPoint = new File(path);
+        //Get all the files! getFiles() is now irrelevant.
+        File[] allfiles = startingPoint.listFiles();
+        //Gets Folder
+        //For each file found in the dir. if its a dir run it again and keep going into diffrent folders and getting Dirs or MP3s
+        for(File file : allfiles){
+            if(file.isDirectory()){
+                createPlaylistAuto(file.getAbsolutePath());
+                //If contains extension mp3 then do MP3 stuff like save to playlist.
+            } else if(file.getAbsolutePath().toLowerCase().contains(".mp3")){
+                Log.d("FilePathElse",": "+file.getAbsolutePath());
+                // Loop through files of current dir.
+                //Get Abs path of file. Then query content provider to check if file is in mediastore.
+                //Loops Cursor getting all IDS
+                Cursor cursor = cR.query(music, new String[]{"*"},"_data=?",new String[]{file.getAbsolutePath()},null);
+                cursor.moveToFirst();
+                if(!cursor.isAfterLast()){
+                    listOfMusicIds.add(Integer.valueOf(cursor.getString(0)));
+                    Log.d("CursorInfo",": "+cursor.getString(0));
 
+                } else {
+                    //this is just here. I leave this else statment for something....
+                }
+            }
+        }
+        //Once Done SAVE!
+        SavePlaylist(this, listOfMusicIds, startingPoint.getName());
+
+    }
 
 }
